@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.yeyintlwin.dao.UserDAO;
-import com.yeyintlwin.shopping.users.User;
-import com.yeyintlwin.util.Utils;
-import com.yeyintlwin.view.ui.CustomTable;
+import com.yeyintlwin.entity.User;
+import com.yeyintlwin.util.ConsoleIOManager;
+import com.yeyintlwin.view.ui.TableComponent;
 
 public class UserView {
 
@@ -23,10 +23,10 @@ public class UserView {
 
 	public void create(Scanner scanner) {
 		System.out.print("ユーザー名を入力してください: ");
-		String name = Utils.coloredStringInput(scanner);
+		String name = ConsoleIOManager.coloredStringInput(scanner);
 
 		System.out.print("ユーザー残高を入力してください: ");
-		int balance = Utils.coloredIntInput(scanner);
+		int balance = ConsoleIOManager.coloredIntInput(scanner);
 
 		scanner.nextLine(); // console bug, Consume the newline character
 
@@ -36,12 +36,12 @@ public class UserView {
 
 		userDAO.create(user);
 
-		Utils.printSuccess("ユーザーが正常に作成されました:");
+		ConsoleIOManager.printSuccess("ユーザーが正常に作成されました:");
 
 		String[][] table = { { "Id", "Name", "Balance" },
 				{ String.valueOf(user.getId()), user.getName(), user.getWalletAmount().toString() } };
 
-		CustomTable.createTable().setTableData(table).print();
+		TableComponent.createTable().setTableData(table).print();
 	}
 
 	public void read() {
@@ -60,10 +60,10 @@ public class UserView {
 				table[i][2] = String.valueOf(users.get(i - 1).getWalletAmount());
 			}
 
-			CustomTable.createTable().setTableData(table).print();
+			TableComponent.createTable().setTableData(table).print();
 
 		} catch (Exception e) {
-			Utils.printError(e.getMessage());
+			ConsoleIOManager.printError(e.getMessage());
 
 		}
 
@@ -76,10 +76,10 @@ public class UserView {
 			String[][] table = { { "Id", "Name", "Balance" },
 					{ String.valueOf(user.getId()), user.getName(), user.getWalletAmount().toString() } };
 
-			CustomTable.createTable().setTableData(table).print();
+			TableComponent.createTable().setTableData(table).print();
 
 		} catch (Exception e) {
-			Utils.printError(e.getMessage());
+			ConsoleIOManager.printError(e.getMessage());
 		}
 	}
 
@@ -97,32 +97,35 @@ public class UserView {
 			boolean isBalanceChanged = false;
 
 			System.out.print("新しい名前を入力してください（変更しない場合は空白のままにしてください）:");
-			String newName = Utils.coloredStringInput(scanner);
+			String newName = ConsoleIOManager.coloredStringInput(scanner);
 			if (!newName.isEmpty()) {
 				dbUser.setName(newName);
 				isNameChanged = true;
 			}
 
 			System.out.print("新しい残高を入力してください（変更しない場合は空白のままにしてください）:");
-			String balanceStr = Utils.coloredStringInput(scanner);
+			String balanceStr = ConsoleIOManager.coloredStringInput(scanner);
 			if (!balanceStr.isEmpty()) {
 				int newBalance = Integer.parseInt(balanceStr);
 				dbUser.setWalletAmount(newBalance);
 				isBalanceChanged = true;
 			}
 
-			Utils.printSuccess("ユーザーが正常に更新されました:   ");
+			ConsoleIOManager.printSuccess("ユーザーが正常に更新されました:   ");
 
-			String[][] table = { {"Id", "Name", "Balance" },
+			String[][] table = { { "Id", "Name", "Balance" },
 					{ String.valueOf(dbUser.getId()),
 							isNameChanged ? oldUser.getName() + " -> " + dbUser.getName() : dbUser.getName(),
 							isBalanceChanged ? oldUser.getWalletAmount() + " -> " + dbUser.getWalletAmount()
 									: dbUser.getWalletAmount().toString() } };
 
-			CustomTable.createTable().setTableData(table).print();
+			TableComponent.createTable().setTableData(table).print();
+
+			// to update JSON file
+			userDAO.update();
 
 		} catch (Exception e) {
-			Utils.printError(e.getMessage());
+			ConsoleIOManager.printError(e.getMessage());
 			return;
 		}
 
@@ -131,9 +134,9 @@ public class UserView {
 	public void delete(int id) {
 		try {
 			userDAO.delete(id);
-			Utils.printWarning(id+"のユーザーが正常に削除されました:");
+			ConsoleIOManager.printWarning(id + "のユーザーが正常に削除されました:");
 		} catch (Exception e) {
-			Utils.printError(e.getMessage());
+			ConsoleIOManager.printError(e.getMessage());
 		}
 
 	}
