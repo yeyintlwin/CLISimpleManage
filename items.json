@@ -1,1 +1,1 @@
-{"items":[{"name":"Umbrella","id":3,"price":800,"owner_id":3}]}
+{"items":[{"name":"Shoes","id":1,"price":20000,"owner_id":1},{"name":"Bag","id":2,"price":15000,"owner_id":2},{"name":"Book","id":3,"price":150,"owner_id":1}]}
